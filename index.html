@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#030911"><title>JARVIS // COMMAND CENTER</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#02060b;color:#dff6ff;font-family:Arial,sans-serif;overflow:hidden}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(40,170,220,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(40,170,220,.035) 1px,transparent 1px);background-size:35px 35px;pointer-events:none}
+.app{height:100vh;max-width:1050px;margin:auto;display:flex;flex-direction:column}
+.top{height:72px;border-bottom:1px solid #16425b;background:#03101bdd;display:flex;align-items:center;padding:10px 16px;gap:12px}
+.arc{width:48px;height:48px;border:2px solid #3dd5ff;border-radius:50%;display:grid;place-items:center;color:#77e2ff;font-weight:bold;box-shadow:0 0 25px #1bbcff66}
+.title{letter-spacing:5px;font-size:18px}.sub{font-size:10px;color:#58aac6;letter-spacing:2px;margin-top:3px}
+.topright{margin-left:auto;text-align:right;font-size:11px;color:#69c7e5}.clock{font-size:17px;color:#c9f5ff}
+.dashboard{display:grid;grid-template-columns:220px 1fr 220px;gap:12px;padding:14px;height:calc(100vh - 72px)}
+.panel{border:1px solid #12425c;background:#04111bd9;border-radius:15px;padding:13px;min-height:0;box-shadow:inset 0 0 30px #061a2855}
+.panel h3{font-size:11px;letter-spacing:2px;color:#61c9eb;margin:0 0 13px}
+.metric{margin:13px 0}.label{font-size:10px;color:#608da3}.bar{height:5px;background:#0b2533;border-radius:8px;overflow:hidden;margin-top:5px}.fill{height:100%;background:#28bce9;box-shadow:0 0 10px #28bce9}
+.core{display:flex;flex-direction:column;min-height:0}.reactor{height:155px;display:grid;place-items:center;position:relative}
+.ring{width:120px;height:120px;border-radius:50%;border:2px solid #37cfff;box-shadow:0 0 20px #2bcfff55, inset 0 0 20px #2bcfff33;display:grid;place-items:center;animation:pulse 3s infinite}
+.ring:before{content:"";position:absolute;width:88px;height:88px;border:1px dashed #55ddff;border-radius:50%;animation:spin 10s linear infinite}
+.j{font-size:28px;color:#baf1ff;z-index:1}
+@keyframes pulse{50%{box-shadow:0 0 42px #2bcfff88,inset 0 0 30px #2bcfff55}}@keyframes spin{to{transform:rotate(360deg)}}
+.chat{flex:1;overflow:auto;padding:4px 3px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:86%;padding:10px 12px;border-radius:13px;line-height:1.42;font-size:14px;white-space:pre-wrap}.bot{background:#061a27;border:1px solid #16465e;align-self:flex-start}.user{background:#075b7b;align-self:flex-end}
+.controls{display:flex;gap:7px;margin-top:9px}.btn{flex:1;border:1px solid #1a5872;background:#071b28;color:#9ee7ff;border-radius:10px;padding:9px;font-size:11px}.active{background:#8b2741;color:white}
+form{display:flex;gap:7px;margin-top:8px}input{flex:1;background:#020b13;border:1px solid #17465e;color:white;border-radius:10px;padding:11px;outline:none}.send{width:45px;border:0;border-radius:10px;background:#24b9eb;color:#00131b;font-weight:bold}
+.quick{display:flex;gap:6px;flex-wrap:wrap}.quick button{background:#061a27;border:1px solid #15506a;color:#8fdcf3;border-radius:14px;padding:7px 9px;font-size:10px}
+@media(max-width:800px){body{overflow:auto}.dashboard{height:auto;min-height:calc(100vh - 72px);grid-template-columns:1fr;padding:10px}.panel.side{display:none}.core{min-height:calc(100vh - 95px)}.reactor{height:130px}.chat{min-height:260px}.top{height:65px}}
+</style></head>
+<body>
+<div class="app">
+<header class="top"><div class="arc">J</div><div><div class="title">JARVIS</div><div class="sub">COMMAND CENTER // PERSONAL AI</div></div><div class="topright"><div class="clock" id="clock">--:--:--</div><div id="online">● SYSTEM ONLINE</div></div></header>
+
+<div class="dashboard">
+<section class="panel side"><h3>SISTEMA</h3>
+<div class="metric"><div class="label">NÚCLEO</div><div class="bar"><div class="fill" style="width:94%"></div></div></div>
+<div class="metric"><div class="label">MEMÓRIA</div><div class="bar"><div class="fill" style="width:72%"></div></div></div>
+<div class="metric"><div class="label">INTERFACE</div><div class="bar"><div class="fill" style="width:99%"></div></div></div>
+<h3 style="margin-top:28px">COMANDOS</h3><div class="quick">
+<button onclick="quick('Organize meu dia em uma lista objetiva.')">Organizar dia</button>
+<button onclick="quick('Me ajude a estudar um assunto.')">Modo estudo</button>
+<button onclick="quick('Me dê um conselho importante.')">Conselho</button>
+<button onclick="quick('Explique uma curiosidade científica.')">Curiosidade</button>
+</div></section>
+
+<section class="panel core">
+<div class="reactor"><div class="ring"><div class="j">J</div></div></div>
+<div class="chat" id="chat"><div class="msg bot">Sistemas online. Olá. Eu sou o JARVIS. O centro de comando está pronto.</div></div>
+<form id="form"><input id="input" placeholder="Comando para o JARVIS..." autocomplete="off"><button class="send">➤</button></form>
+<div class="controls"><button class="btn" id="mic" onclick="toggleVoice()">🎙 VOZ</button><button class="btn" onclick="speakLast()">🔊 REPETIR</button><button class="btn" onclick="clearChat()">⌫ LIMPAR</button></div>
+</section>
+
+<section class="panel side"><h3>STATUS</h3><div class="label">ASSISTENTE</div><p style="font-size:13px;color:#a9d7e8">Inteligente<br>Atencioso<br>Objetivo</p>
+<h3 style="margin-top:28px">MEMÓRIA</h3><div class="label">LOCAL</div><p id="memStatus" style="font-size:12px;color:#76c9e6">Ativa</p>
+<h3>ATIVAÇÃO</h3><p style="font-size:11px;color:#6c9bb0">Diga “Jarvis” para iniciar o reconhecimento quando o navegador suportar escuta contínua.</p></section>
+</div></div>
+
+<script>
+const chat=document.getElementById("chat"),input=document.getElementById("input"),mic=document.getElementById("mic");
+let messages=JSON.parse(localStorage.getItem("jarvis_messages")||"[]"),memory=localStorage.getItem("jarvis_memory")||"",lastReply="";
+messages.forEach(m=>add(m.content,m.role,false));
+function add(t,r,save=true){const e=document.createElement("div");e.className="msg "+(r==="user"?"user":"bot");e.textContent=t;chat.appendChild(e);chat.scrollTop=chat.scrollHeight;if(save){messages.push({role:r,content:t});messages=messages.slice(-24);localStorage.setItem("jarvis_messages",JSON.stringify(messages));}}
+async function send(t){t=t.trim();if(!t)return;add(t,"user");input.value="";document.getElementById("online").textContent="◌ JARVIS PROCESSANDO...";
+try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages,memory})});const d=await r.json();if(!r.ok)throw Error(d.error);lastReply=d.reply;add(lastReply,"assistant");speak(lastReply);document.getElementById("online").textContent="● SYSTEM ONLINE";}catch(e){add("Núcleo indisponível. Verifique a conexão e a configuração da API.","assistant");document.getElementById("online").textContent="● SYSTEM STANDBY"}}
+function quick(t){send(t)}function speak(t){if(!("speechSynthesis"in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang="pt-BR";u.rate=.98;speechSynthesis.speak(u)}
+function speakLast(){if(lastReply)speak(lastReply)}
+function clearChat(){messages=[];localStorage.removeItem("jarvis_messages");chat.innerHTML='<div class="msg bot">Histórico limpo. Sistemas prontos.</div>'}
+document.getElementById("form").onsubmit=e=>{e.preventDefault();send(input.value)}
+setInterval(()=>document.getElementById("clock").textContent=new Date().toLocaleTimeString("pt-BR"),1000);
+
+let rec=null,listening=false,armed=false;const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){rec=new SR();rec.lang="pt-BR";rec.continuous=true;rec.interimResults=false;
+rec.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++){if(!e.results[i].isFinal)continue;let t=e.results[i][0].transcript.trim();if(!armed){if(/\bjarvis\b/i.test(t)){armed=true;mic.classList.add("active");let c=t.replace(/\bjarvis\b/i,"").trim();if(c)send(c);}}else{send(t);armed=false;mic.classList.remove("active")}}}
+rec.onend=()=>{if(listening){try{rec.start()}catch(e){}}}
+}else{mic.textContent="🎙 INDISPONÍVEL"}
+function toggleVoice(){if(!rec){alert("Seu navegador não oferece reconhecimento contínuo de voz.");return}if(listening){listening=false;rec.stop();mic.classList.remove("active");mic.textContent="🎙 VOZ"}else{listening=true;armed=false;rec.start();mic.textContent="🎙 OUVINDO"}}
+</script></body></html>
